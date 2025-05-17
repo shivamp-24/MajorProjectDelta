@@ -78,3 +78,31 @@
   - Ensured deleted reviews are removed from the `listing.reviews` array in the database.
 - **Handling Listing Deletion**:
   - Implemented a post-middleware in `listing.js` to delete all associated reviews when a listing is removed from the database.
+
+### Day 5: Route Modularization and Session-Based Feedback
+
+- **Express Router for Listings and Reviews**:
+  - Created a `routes` folder with two files: `listing.js` and `reviews.js`.
+  - Moved all listing-related routes from `app.js` to `listing.js`.
+  - Moved all review-related routes from `app.js` to `reviews.js`.
+  - Configured `reviews.js` with `mergeParams: true` to inherit parent route parameters (e.g., listing `id`) from `app.js`.
+- **Express Session Implementation**:
+  - Installed `express-session` using `npm i express-session`.
+  - Configured session middleware in `app.js` to enable session management.
+  - Added `sessionOptions` with cookie settings for `expires` and `maxAge` to control session duration.
+- **Connect-Flash Integration**:
+  - Installed `connect-flash` using `npm i connect-flash`.
+  - Set up flash middleware in `app.js` to display success messages.
+  - Added success flash messages for creating a new listing.
+- **Flash Success Notifications**:
+  - Created `flash.ejs` in the `includes` folder, styled with Bootstrap for success alerts.
+  - Included `flash.ejs` in `boilerplate.ejs`, displaying success messages only when they exist and have a length greater than 0.
+  - Added success flash messages in routes for:
+    - Creating a review.
+    - Deleting a review.
+    - Creating a listing.
+    - Deleting a listing.
+- **Flash Failure Notifications**:
+  - Implemented failure flash messages for cases when a listing does not exist, such as:
+    - Attempting to show a non-existent listing.
+    - Attempting to edit a non-existent listing.
