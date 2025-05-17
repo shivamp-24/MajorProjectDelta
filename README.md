@@ -58,3 +58,23 @@
 - Explored schema validation approaches:
   - Considered `if` conditions in `wrapAsync` for field checks.
   - Adopted Joi for robust validation in the create route.
+
+### Day 4: Review System Implementation
+
+- **Review Model Creation**:
+  - Created `review.js` in the `models` folder to define `reviewSchema`.
+  - Updated `listingSchema` in `listing.js` to include a `reviews` array storing `ObjectId` references to reviews.
+- **Review Creation**:
+  - Updated `show.ejs` to include a form for submitting reviews, using Bootstrap classes (`form-label`, `form-range`, `form-control`).
+  - Added a POST route in `app.js` at `/listings/:id/reviews` to handle review submissions.
+- **Review Validations**:
+  - Implemented client-side form validations in `show.ejs` using Bootstrap.
+  - Added server-side validations using Joi to ensure valid review data.
+- **Rendering Reviews**:
+  - Modified the show route in `app.js` to use `.populate` for fetching and displaying review details in `show.ejs`.
+  - Styled reviews in `show.ejs` using Bootstrap cards for a clean presentation.
+- **Deleting Reviews**:
+  - Added a delete form in `show.ejs` to send a DELETE request to `/listings/:id/reviews/:reviewId` in `app.js`.
+  - Ensured deleted reviews are removed from the `listing.reviews` array in the database.
+- **Handling Listing Deletion**:
+  - Implemented a post-middleware in `listing.js` to delete all associated reviews when a listing is removed from the database.
