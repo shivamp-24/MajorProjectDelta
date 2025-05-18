@@ -106,3 +106,48 @@
   - Implemented failure flash messages for cases when a listing does not exist, such as:
     - Attempting to show a non-existent listing.
     - Attempting to edit a non-existent listing.
+
+### Day 6: Authentication and Authorization
+
+- **Passport Authentication Setup**:
+  - Installed dependencies: `npm i passport`, `npm i passport-local`, `npm i passport-local-mongoose`.
+  - Created `user.js` in the `models` folder to define `userSchema`, with `passport-local-mongoose` handling `username`, `hashed password`, and `salt`, and added `email` field.
+  - Configured Passport in `app.js`:
+    - Used `passport.initialize()` to initialize Passport middleware.
+    - Added `passport.session()` after `sessionOptions` for persistent user sessions.
+    - Set up `passport.use(new LocalStrategy(User.authenticate()))` for authentication.
+    - Defined `serializeUser` and `deserializeUser` functions to manage user session storage.
+- **User Signup**:
+  - Created `user.js` in the `routes` folder for user-related routes, integrated into `app.js`.
+  - Created a `users` folder in `views` with `signup.ejs`, using the boilerplate layout.
+    - **GET /signup**: Rendered `signup.ejs` with a signup form.
+    - **POST /signup**: Handled form submission to create and register a new user with `req.body` details and password, using `wrapAsync` and try-catch for error handling (e.g., duplicate user).
+  - Enabled automatic login after signup using `req.login()` in the POST `/signup` route.
+- **User Login**:
+  - Created `login.ejs` in the `users` folder with a form for `username` and `password`.
+    - **GET /login**: Rendered `login.ejs` for the login form.
+    - **POST /login**: Used Passport middleware to authenticate users, redirecting on success or failure (e.g., wrong password).
+  - Created `middleware.js` with an `isLoggedIn` middleware using `isAuthenticated()` to ensure users are logged in before adding, editing, or deleting listings, applied to relevant routes.
+- **User Logout**:
+  - Implemented a GET `/logout` route in `user.js` using `passport.logout()` to end user sessions, leveraging `serializeUser` and `deserializeUser`.
+- **Navbar Styling for Authentication**:
+  - Updated `navbar.ejs` to include signup, login, and logout links.
+  - Used `req.user` to conditionally display links based on login status (`undefined` when not logged in, object when logged in).
+  - Defined `res.locals.currUser = req.user` in `app.js` to make `req.user` accessible in `navbar.ejs` for conditional rendering.
+- **Post-Login Redirection**:
+  - Created `saveRedirectUrl` middleware in `middleware.js` to store `req.originalUrl` in `res.locals` before Passport resets `req.session`.
+  - Saved `req.session.redirectUrl = req.originalUrl` in `isLoggedIn` middleware for protected routes (e.g., add/edit listing).
+  - Redirected users to `res.locals.redirectUrl` or `/listings` (fallback) after login in POST `/login` to handle cases like logging in from the homepage.
+- **Listing Ownership**:
+  - Added an `owner` field to `listingSchema` in `listing.js` to store the user `ObjectId`.
+  - Mapped existing listings to an owner ID during database initialization in `init/index.js`.
+  - Populated `owner` details in show routes using `.populate("owner")` for display in `show.ejs`.
+  - Set the owner of new listings to the currently logged-in user via `req.user._id`.
+- **Authorization for Listings**:
+  - Hid edit and delete buttons in `show.ejs` when `currUser._id` does not match `listing.owner._id` or no user is logged in, using an if condition.
+  - Created `isOwner` middleware in `middleware.js` to verify ownership, applied to edit and delete routes to prevent unauthorized API requests (e.g., via Hoppscotch or Postman).
+- **Authorization for Reviews**:
+  - Updated `reviewSchema` to include an `author` field storing the user `ObjectId`.
+  - Hid the review form in `show.ejs` when not logged in and added `isLoggedIn` middleware to the review POST route.
+  - Used nested `.populate` in `listing.js` to fetch reviews and their authors for display in `show.ejs`.
+  - Created `isReviewAuthor` middleware in `middleware.js` to ensure only the review author can delete a review, applied to the delete route.
