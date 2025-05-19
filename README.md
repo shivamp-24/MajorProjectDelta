@@ -151,3 +151,45 @@
   - Hid the review form in `show.ejs` when not logged in and added `isLoggedIn` middleware to the review POST route.
   - Used nested `.populate` in `listing.js` to fetch reviews and their authors for display in `show.ejs`.
   - Created `isReviewAuthor` middleware in `middleware.js` to ensure only the review author can delete a review, applied to the delete route.
+
+### Day 7: MVC Framework, Image Upload, and Maps Integration
+
+- **MVC Framework Implementation**:
+  - Created a `controller` folder to store callback functions for all routes, separating logic from routes for listings, reviews, and users.
+  - Refactored routes using `router.route` in `listing.js`, `reviews.js`, and `user.js` to group related routes (e.g., GET, POST, DELETE for the same path) for more compact and organized code.
+- **Restyling Ratings**:
+  - Integrated starability CSS from GitHub for enhanced rating visuals.
+  - Created `rating.css` in the CSS folder, copying the starability code.
+  - Applied rating styling in `show.ejs` to display review ratings attractively.
+- **Image Upload Setup**:
+  - **Form Modification**:
+    - Updated forms in `new.ejs` and `edit.ejs` to support file uploads using `enctype="multipart/form-data"` and `type="file"` for image inputs.
+    - Installed `multer` (`npm i multer`) and used `upload.single('listing[image]')` middleware to parse single image uploads.
+  - **Cloudinary Integration**:
+    - Set up Cloudinary for image storage, storing credentials (cloud name, API key, API secret) in a `.env` file using key-value pairs without spaces or quotes.
+    - Installed `dotenv` (`npm i dotenv`) to load environment variables into `process.env`.
+    - Ensured `.env` is excluded from GitHub for security.
+    - Installed `multer-storage-cloudinary` (`npm i multer multer-storage-cloudinary`) and created `cloudConfig.js` to configure Cloudinary storage, exported for use in `listing.js`.
+    - Stored image URLs in `res.path` from Cloudinary responses.
+  - **MongoDB Storage**:
+    - Modified `listingSchema` to store image `url` and `filename` fields.
+    - Updated the `createListing` controller to save Cloudinary image URL and filename in MongoDB when creating a new listing.
+  - **Edit Listing Image**:
+    - Updated `edit.ejs` form and its route/controller to support uploading new images, similar to the create listing process.
+  - **Image Preview**:
+    - Added image preview in `edit.ejs` by displaying a degraded version of the current image (blurred and resized) to reduce load time.
+- **Map Integration with Mapbox**:
+  - **Environment Setup**:
+    - Stored Mapbox access token in `.env` for secure access.
+  - **Basic Map Display**:
+    - Integrated Mapbox in `show.ejs` using styling and script from the Mapbox "Display a map on a webpage" documentation.
+    - Created `map.js` to handle map logic, centering the map on the listing’s location.
+    - Defined `mapToken` in a `<script>` tag in `show.ejs` to make it accessible in `map.js`.
+  - **Geocoding**:
+    - Installed `@mapbox/mapbox-sdk` (`npm install @mapbox/mapbox-sdk`) for geocoding API requests.
+    - Used Mapbox Geocoding API in the `createListing` controller to convert listing locations to coordinates, following GitHub documentation.
+    - Stored coordinates in `listingSchema` using GeoJSON format for MongoDB compatibility (e.g., for proximity-based queries).
+  - **Map Markers and Popups**:
+    - Updated `map.js` to create a Mapbox marker using `Listing.geometry.coordinates` for latitude and longitude.
+    - Defined listing coordinates in a `<script>` tag in `show.ejs` to make them accessible in `map.js`.
+    - Added a popup to the marker using `.setPopup` from the Mapbox GL JS guide, displaying text when clicked.
