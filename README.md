@@ -193,3 +193,27 @@
     - Updated `map.js` to create a Mapbox marker using `Listing.geometry.coordinates` for latitude and longitude.
     - Defined listing coordinates in a `<script>` tag in `show.ejs` to make them accessible in `map.js`.
     - Added a popup to the marker using `.setPopup` from the Mapbox GL JS guide, displaying text when clicked.
+
+### Day 8: Home Page Enhancements, Filters, and Deployment
+
+- **Home Page and Filter UI**:
+  - Enhanced the home page UI to resemble Airbnb, adding filter functionality.
+  - Added a tax switch UI with event listeners to toggle tax display or calculations.
+  - Implemented a search UI to allow users to filter listings based on input.
+- **MongoDB Atlas Setup**:
+  - Deployed a multi-cloud database using MongoDB Atlas for online storage.
+  - Configured network access in MongoDB Atlas, specifying allowed IPs (noting that proxy connections are unsupported).
+  - Stored the Atlas database URL in the `.env` file.
+  - Updated the MongoDB connection URL in the application to use the Atlas URL, enabling online database access.
+- **MongoDB Session Store**:
+  - Installed `connect-mongo` (`npm i connect-mongo`) to replace Express session’s default memory store, which is unsuitable for production.
+  - Configured a MongoDB-based session store in `sessionOptions` within `app.js`.
+  - Set the `touchAfter` parameter to reduce database write load by updating the session’s `expires` field only once within a specified interval when accessed but not modified.
+- **Deployment with Render**:
+  - Updated `package.json` to specify the Node.js version to prevent future compatibility issues.
+  - Pushed code to GitHub:
+    - Added `.env` and `node_modules` to `.gitignore` to exclude sensitive data and dependencies (reinstallable via `npm install`).
+  - Connected Render to the GitHub repository for deployment.
+  - Created a new web service on Render and added environment variables from the `.env` file.
+  - Whitelisted Render’s Static Outbound IP Addresses in MongoDB Atlas for network access.
+  - Deployed the application, enabling automatic updates via GitHub commits.
